@@ -1,3 +1,2 @@
-# telephonist
-Secure messaging without algorithms which can be brute-forced.
-Based on face-to-face exchange key-files. When the message is sent, key will erase.
+# UNPREDICTABLE
+The way to encrypt data using face-to-face exchange keys which can not be brute-forced.
