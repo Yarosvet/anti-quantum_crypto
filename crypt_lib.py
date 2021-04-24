@@ -1,15 +1,33 @@
 from random import randbytes
 
 
-class Encryptor:
+class Book:
     def __init__(self, book="book"):
-        self.book = open(book, 'rb')
+        self.book = open(book, 'rb+')
+        self.length = self.book.seek(0, 2)
+        self.position = 0
 
     def __del__(self):
         self.book.close()
 
+    def read(self):
+        self.book.seek(self.position - 1, 2)
+        self.position -= 1
+        return self.book.read(1)
+
+    def erase_end(self):
+        self.book.truncate(self.length + self.position)
+        self.book.flush()
+        self.length = self.book.seek(0, 2)
+        self.position = 0
+
+
+class Encryptor(Book):
+    def __init__(self, book="book"):
+        super().__init__(book)
+
     def encrypt_sym(self, sym: int):
-        key = ord(self.book.read(1))
+        key = ord(self.read())
         return sym - key
 
     def encrypt_bytes(self, row: bytes, buffer=2, byteorder="little"):
@@ -19,15 +37,12 @@ class Encryptor:
         return bytes().join(encrypted)
 
 
-class Decryptor:
+class Decryptor(Book):
     def __init__(self, book="book"):
-        self.book = open(book, 'rb')
-
-    def __del__(self):
-        self.book.close()
+        super().__init__(book)
 
     def decrypt_sym(self, sym: int):
-        key = ord(self.book.read(1))
+        key = ord(self.read())
         return key + sym
 
     def decrypt_bytes(self, row: bytes, buffer=2, byteorder="little"):
